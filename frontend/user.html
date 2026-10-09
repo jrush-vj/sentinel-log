@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentinel Commercial Banking &bull; Client Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f8fafc',
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#020617'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#090a0f] text-neutral-100 min-h-screen flex flex-col antialiased">
+
+  <!-- Institutional Top Header -->
+  <header class="border-b border-[#1b1f2b] bg-[#0d0f15]/90 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      
+      <!-- Brand -->
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded bg-[#1c2230] border border-[#2d364d] flex items-center justify-center font-bold text-xs text-neutral-200">
+          SB
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xs font-semibold uppercase tracking-wider text-neutral-200">Sentinel Commercial Bank</h1>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#161a24] text-neutral-400 border border-[#242b3b]">
+              Node ACT-8842
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Header Controls -->
+      <div class="flex items-center gap-2.5">
+        <!-- Live Connection Status -->
+        <div class="flex items-center gap-2 px-2.5 py-1 rounded bg-[#11141c] border border-[#1e2330] text-[11px] text-neutral-400 font-mono">
+          <span id="ws-indicator" class="status-dot-emerald"></span>
+          <span id="ws-status-text">Connected</span>
+        </div>
+
+        <!-- Share Links -->
+        <button onclick="openShareModal()" class="px-2.5 py-1 rounded bg-[#161922] hover:bg-[#1e2330] text-[11px] font-medium text-neutral-300 border border-[#242938] transition-colors">
+          Share Access Links
+        </button>
+
+        <!-- Admin Portal Switch -->
+        <a href="/admin" class="px-2.5 py-1 rounded bg-[#1a2336] hover:bg-[#202b42] text-blue-300 border border-[#293652] text-[11px] font-medium transition-colors">
+          Auditor Console &rarr;
+        </a>
+
+        <!-- Sound toggle -->
+        <button id="sound-btn" class="p-1 rounded bg-[#161922] text-neutral-400 hover:text-white text-xs border border-[#242938]" title="Toggle audio chime">
+          🔊
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Portal Layout -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+    <!-- Account Overview & Corporate Card -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+      
+      <!-- Matte Titanium Corporate Card (Col 5) -->
+      <div class="lg:col-span-5 matte-card rounded-xl p-5 text-white flex flex-col justify-between min-h-[200px]">
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="text-[10px] font-mono uppercase tracking-widest text-neutral-400">CORPORATE TREASURY</span>
+            <p class="text-xs text-neutral-200 font-medium mt-0.5">Commercial Checking &bull; #8842</p>
+          </div>
+          <!-- Matte Chip -->
+          <div class="w-8 h-6 rounded bg-[#2a2f3d] border border-[#3b4358] flex items-center justify-center">
+            <div class="w-4 h-3 border border-[#4d5670] rounded-sm opacity-60"></div>
+          </div>
+        </div>
+
+        <div class="my-3">
+          <p class="text-[10px] text-neutral-400 font-mono tracking-wider">ACCOUNT IDENTIFIER</p>
+          <p class="text-base font-mono tracking-widest text-neutral-100 font-semibold mt-0.5">
+            4912 &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 9910
+          </p>
+        </div>
+
+        <div class="flex justify-between items-end pt-3 border-t border-[#262c3d]">
+          <div>
+            <p class="text-[9px] text-neutral-400 uppercase tracking-wider font-mono">ACCOUNT HOLDER</p>
+            <p id="account-holder" class="text-xs font-semibold text-neutral-200 tracking-wide">ALEX VANCE</p>
+          </div>
+          <div class="text-right">
+            <p class="text-[9px] text-neutral-400 uppercase tracking-wider font-mono">EXPIRY</p>
+            <p class="text-xs font-mono text-neutral-300">10 / 28</p>
+          </div>
+          <span class="text-[10px] font-mono text-emerald-400 bg-[#0f1d16] px-2 py-0.5 rounded border border-[#1b4332]">
+            VERIFIED
+          </span>
+        </div>
+      </div>
+
+      <!-- Account Balance & Statistics (Col 7) -->
+      <div class="lg:col-span-7 surface-panel rounded-xl p-5 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[11px] font-medium uppercase tracking-wider text-neutral-400">Available Account Balance</span>
+            <span id="account-number" class="text-xs font-mono text-neutral-400">ACT-8842-9910-SENTINEL</span>
+          </div>
+
+          <div class="flex items-baseline gap-2.5 my-1">
+            <h2 id="balance-amount" class="text-3xl sm:text-4xl font-bold text-white tracking-tight font-mono">
+              $125,000.00
+            </h2>
+            <span class="text-xs font-semibold text-neutral-400 uppercase">USD</span>
+          </div>
+
+          <p class="text-xs text-neutral-400 mt-1">
+            Recomputed in real-time from forward-secure cryptographic audit records.
+          </p>
+        </div>
+
+        <!-- Metric Trio -->
+        <div class="grid grid-cols-3 gap-3 pt-4 mt-3 border-t border-[#1e2330]">
+          <div class="p-3 rounded-lg bg-[#0c0e14] border border-[#1a1e29]">
+            <span class="text-[10px] font-medium text-neutral-400 block mb-0.5">Total Deposits</span>
+            <span id="stat-deposits" class="text-sm font-semibold text-emerald-400 font-mono">+$0.00</span>
+          </div>
+
+          <div class="p-3 rounded-lg bg-[#0c0e14] border border-[#1a1e29]">
+            <span class="text-[10px] font-medium text-neutral-400 block mb-0.5">Total Disbursals</span>
+            <span id="stat-withdrawals" class="text-sm font-semibold text-rose-400 font-mono">-$0.00</span>
+          </div>
+
+          <div class="p-3 rounded-lg bg-[#0c0e14] border border-[#1a1e29]">
+            <span class="text-[10px] font-medium text-neutral-400 block mb-0.5">Committed Records</span>
+            <span id="stat-tx-count" class="text-sm font-semibold text-neutral-200 font-mono">0 Entries</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Operations Panel (Deposit, Withdraw, Wire Transfer) -->
+    <div class="surface-panel rounded-xl p-5">
+      
+      <!-- Tab Header Selector -->
+      <div class="flex flex-wrap items-center justify-between border-b border-[#1e2330] pb-3 mb-5 gap-3">
+        <div>
+          <h3 class="text-sm font-semibold text-white">Execute Account Transaction</h3>
+          <p class="text-xs text-neutral-400">All submitted actions are cryptographically sealed into the host audit log.</p>
+        </div>
+
+        <!-- Segmented Tab Switcher -->
+        <div class="flex items-center p-1 rounded-lg bg-[#0c0e14] border border-[#1a1e29]">
+          <button id="tab-deposit" onclick="switchActionTab('deposit')" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-[#1e2330] text-white border border-[#2d3548]">
+            Deposit Funds
+          </button>
+          <button id="tab-withdraw" onclick="switchActionTab('withdraw')" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-neutral-400 hover:text-white">
+            Withdraw Cash
+          </button>
+          <button id="tab-transfer" onclick="switchActionTab('transfer')" class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-neutral-400 hover:text-white">
+            Wire Transfer
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 1: DEPOSIT -->
+      <div id="panel-deposit">
+        <form id="form-deposit" onsubmit="handleDeposit(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-neutral-300 mb-2">Deposit Amount (USD)</label>
+            <!-- Preset chips -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2.5">
+              <button type="button" onclick="setDepositAmount(500)" class="py-2 px-3 rounded-lg bg-[#0c0e14] hover:bg-[#161a24] border border-[#1e2330] hover:border-[#2d3548] text-xs font-mono font-medium text-neutral-200 transition-colors">+$500</button>
+              <button type="button" onclick="setDepositAmount(1000)" class="py-2 px-3 rounded-lg bg-[#0c0e14] hover:bg-[#161a24] border border-[#1e2330] hover:border-[#2d3548] text-xs font-mono font-medium text-neutral-200 transition-colors">+$1,000</button>
+              <button type="button" onclick="setDepositAmount(5000)" class="py-2 px-3 rounded-lg bg-[#0c0e14] hover:bg-[#161a24] border border-[#1e2330] hover:border-[#2d3548] text-xs font-mono font-medium text-neutral-200 transition-colors">+$5,000</button>
+              <button type="button" onclick="setDepositAmount(15000)" class="py-2 px-3 rounded-lg bg-[#0c0e14] hover:bg-[#161a24] border border-[#1e2330] hover:border-[#2d3548] text-xs font-mono font-medium text-neutral-200 transition-colors">+$15,000</button>
+            </div>
+
+            <!-- Custom Input -->
+            <div class="relative rounded-lg">
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-neutral-400 font-mono">$</div>
+              <input type="number" id="deposit-amount" min="1" step="any" required placeholder="0.00" class="w-full rounded-lg bg-[#0c0e14] pl-8 pr-14 py-2.5 text-base font-mono font-semibold text-white border border-[#1e2330] focus:border-[#3b445c] focus:outline-none transition-colors" />
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs text-neutral-500 font-mono">USD</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-medium text-neutral-400 mb-1">Funding Mechanism</label>
+              <select id="deposit-source" class="w-full bg-[#0c0e14] rounded-lg px-3 py-2 text-xs text-neutral-200 border border-[#1e2330] focus:border-[#3b445c] focus:outline-none">
+                <option value="Direct Deposit / Electronic ACH">Direct Deposit / Electronic ACH</option>
+                <option value="Mobile Check Deposit">Mobile Check Deposit</option>
+                <option value="Corporate Treasury Allocation">Corporate Treasury Allocation</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-medium text-neutral-400 mb-1">Reference Memo</label>
+              <input type="text" id="deposit-note" placeholder="Memo details" value="Capital Allocation" class="w-full bg-[#0c0e14] rounded-lg px-3 py-2 text-xs text-neutral-200 border border-[#1e2330] focus:border-[#3b445c] focus:outline-none" />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <span class="text-[11px] text-neutral-500 font-mono">Algorithm: SHA-256 Chaining &bull; HMAC-SHA256 MAC</span>
+            <button type="submit" id="btn-deposit-submit" class="px-4 py-2 rounded-lg bg-[#162030] hover:bg-[#1f2d44] text-neutral-100 font-medium text-xs border border-[#2b3a58] transition-colors">
+              Authorize Deposit
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- TAB 2: WITHDRAW -->
+      <div id="panel-withdraw" class="hidden">
+        <form id="form-withdraw" onsubmit="handleWithdraw(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-neutral-300 mb-2">Withdrawal Amount (USD)</label>
+            <!-- Preset chips -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2.5">
+              <button type="button" onclick="setWithdrawAmount(100)" class="py-2 px-3 rounded-lg bg-[#0c0e14] hover:bg-[#161a24] border border-[#1e2330] hover:border-[#2d3548] text-xs font-mono font-medium text-neutral-200 transition-colors">-$100</button>
+              <button type="button" onclick="setWithdrawAmount(500)" class="py-2 px-3 rounded-lg bg-[#0c0e14] hover:bg-[#161a24] border border-[#1e2330] hover:border-[#2d3548] text-xs font-mono font-medium text-neutral-200 transition-colors">-$500</button>
+              <button type="button" onclick="setWithdrawAmount(1000)" class="py-2 px-3 rounded-lg bg-[#0c0e14] hover:bg-[#161a24] border border-[#1e2330] hover:border-[#2d3548] text-xs font-mono font-medium text-neutral-200 transition-colors">-$1,000</button>
+              <button type="button" onclick="setWithdrawAmount(2500)" class="py-2 px-3 rounded-lg bg-[#0c0e14] hover:bg-[#161a24] border border-[#1e2330] hover:border-[#2d3548] text-xs font-mono font-medium text-neutral-200 transition-colors">-$2,500</button>
+            </div>
+
+            <!-- Custom Input -->
+            <div class="relative rounded-lg">
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-neutral-400 font-mono">$</div>
+              <input type="number" id="withdraw-amount" min="1" step="any" required placeholder="0.00" class="w-full rounded-lg bg-[#0c0e14] pl-8 pr-14 py-2.5 text-base font-mono font-semibold text-white border border-[#1e2330] focus:border-[#3b445c] focus:outline-none transition-colors" />
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs text-neutral-500 font-mono">USD</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-medium text-neutral-400 mb-1">Disbursement Channel</label>
+              <select id="withdraw-method" class="w-full bg-[#0c0e14] rounded-lg px-3 py-2 text-xs text-neutral-200 border border-[#1e2330] focus:border-[#3b445c] focus:outline-none">
+                <option value="ATM Cash Dispenser">ATM Cash Dispenser</option>
+                <option value="Over-the-Counter Disbursal">Over-the-Counter Disbursal</option>
+                <option value="Electronic Bank Draft">Electronic Bank Draft</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-medium text-neutral-400 mb-1">Memo</label>
+              <input type="text" id="withdraw-note" placeholder="Memo" value="Cash Disbursal" class="w-full bg-[#0c0e14] rounded-lg px-3 py-2 text-xs text-neutral-200 border border-[#1e2330] focus:border-[#3b445c] focus:outline-none" />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <span class="text-[11px] text-neutral-500 font-mono">Overdraft validation enforced</span>
+            <button type="submit" id="btn-withdraw-submit" class="px-4 py-2 rounded-lg bg-[#281619] hover:bg-[#361d22] text-rose-200 font-medium text-xs border border-[#4d252b] transition-colors">
+              Authorize Disbursal
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- TAB 3: WIRE TRANSFER -->
+      <div id="panel-transfer" class="hidden">
+        <form id="form-transfer" onsubmit="handleTransfer(event)" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-medium text-neutral-400 mb-1">Beneficiary Name / Enterprise</label>
+              <input type="text" id="transfer-recipient" required placeholder="Beneficiary name" value="Supplier B" class="w-full bg-[#0c0e14] rounded-lg px-3 py-2 text-xs text-neutral-100 border border-[#1e2330] focus:border-[#3b445c] focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-medium text-neutral-400 mb-1">Invoice / PO Reference</label>
+              <input type="text" id="transfer-ref" placeholder="Reference" value="PO-2026-0099" class="w-full bg-[#0c0e14] rounded-lg px-3 py-2 text-xs text-neutral-100 border border-[#1e2330] focus:border-[#3b445c] focus:outline-none" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-neutral-300 mb-2">Wire Amount (USD)</label>
+            <div class="relative rounded-lg">
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-neutral-400 font-mono">$</div>
+              <input type="number" id="transfer-amount" min="1" step="any" required placeholder="0.00" class="w-full rounded-lg bg-[#0c0e14] pl-8 pr-14 py-2.5 text-base font-mono font-semibold text-white border border-[#1e2330] focus:border-[#3b445c] focus:outline-none transition-colors" />
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-xs text-neutral-500 font-mono">USD</div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <span class="text-[11px] text-neutral-500 font-mono">Outbound Fedwire / Commercial Clearing</span>
+            <button type="submit" id="btn-transfer-submit" class="px-4 py-2 rounded-lg bg-[#162030] hover:bg-[#1f2d44] text-neutral-100 font-medium text-xs border border-[#2b3a58] transition-colors">
+              Execute Wire
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+    <!-- Live Transaction History -->
+    <div class="surface-panel rounded-xl p-5 space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-[#1e2330]">
+        <div>
+          <h3 class="text-sm font-semibold text-white">Committed Ledger History</h3>
+          <p class="text-xs text-neutral-400">Click any row to view cryptographic proof and hash linkage.</p>
+        </div>
+
+        <!-- Filter pills -->
+        <div class="flex items-center gap-1.5">
+          <button onclick="filterTransactions('ALL')" id="filter-all" class="px-2.5 py-1 rounded text-xs font-medium bg-[#1e2330] text-white border border-[#2d3548]">All</button>
+          <button onclick="filterTransactions('DEPOSIT')" id="filter-dep" class="px-2.5 py-1 rounded text-xs font-medium text-neutral-400 hover:text-white">Deposits</button>
+          <button onclick="filterTransactions('WITHDRAWAL')" id="filter-wth" class="px-2.5 py-1 rounded text-xs font-medium text-neutral-400 hover:text-white">Disbursals</button>
+          <button onclick="filterTransactions('WIRE_TRANSFER')" id="filter-wire" class="px-2.5 py-1 rounded text-xs font-medium text-neutral-400 hover:text-white">Wires</button>
+        </div>
+      </div>
+
+      <!-- Table Container -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="border-b border-[#1e2330] text-neutral-400 font-mono text-[11px]">
+              <th class="py-2.5 px-3">Idx</th>
+              <th class="py-2.5 px-3">Timestamp</th>
+              <th class="py-2.5 px-3">Action</th>
+              <th class="py-2.5 px-3">Channel / Counterparty</th>
+              <th class="py-2.5 px-3 text-right">Amount</th>
+              <th class="py-2.5 px-3 text-center">Proof</th>
+            </tr>
+          </thead>
+          <tbody id="transaction-rows" class="divide-y divide-[#171b25] font-sans">
+            <tr>
+              <td colspan="6" class="py-6 text-center text-neutral-500">Loading ledger records...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Institutional Footer -->
+  <footer class="border-t border-[#1b1f2b] bg-[#090a0f] py-4 text-center text-[11px] text-neutral-500">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>&copy; 2026 Sentinel Commercial Bank &bull; Tamper-Evident Ledger Engine</p>
+      <div class="flex items-center gap-4">
+        <a href="/admin" class="hover:text-neutral-300 transition-colors">Auditor Console</a>
+        <a href="/" class="hover:text-neutral-300 transition-colors">Gateway</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/static/app.js"></script>
+  <script>
+    let accountData = null;
+    let currentFilter = 'ALL';
+    let rawTransactions = [];
+
+    function switchActionTab(tab) {
+      const tabs = ['deposit', 'withdraw', 'transfer'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        const pnl = document.getElementById(`panel-${t}`);
+        if (t === tab) {
+          btn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-[#1e2330] text-white border border-[#2d3548]';
+          pnl.classList.remove('hidden');
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-neutral-400 hover:text-white';
+          pnl.classList.add('hidden');
+        }
+      });
+    }
+
+    function setDepositAmount(val) {
+      document.getElementById('deposit-amount').value = val;
+    }
+
+    function setWithdrawAmount(val) {
+      document.getElementById('withdraw-amount').value = val;
+    }
+
+    async function refreshAccount() {
+      try {
+        const res = await fetch('/api/account');
+        if (!res.ok) throw new Error('Failed to load account');
+        accountData = await res.json();
+
+        document.getElementById('balance-amount').textContent = formatUSD(accountData.balance);
+        document.getElementById('stat-deposits').textContent = `+${formatUSD(accountData.total_deposits)}`;
+        document.getElementById('stat-withdrawals').textContent = `-${formatUSD(accountData.total_withdrawals)}`;
+        document.getElementById('stat-tx-count').textContent = `${accountData.transaction_count} Entries`;
+        document.getElementById('account-number').textContent = accountData.account_number;
+        document.getElementById('account-holder').textContent = accountData.holder_name.toUpperCase();
+
+        rawTransactions = accountData.recent_transactions || [];
+        renderTransactions();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function filterTransactions(filter) {
+      currentFilter = filter;
+      ['all', 'dep', 'wth', 'wire'].forEach(k => {
+        const b = document.getElementById(`filter-${k}`);
+        if (b) b.className = 'px-2.5 py-1 rounded text-xs font-medium text-neutral-400 hover:text-white';
+      });
+
+      if (filter === 'ALL') document.getElementById('filter-all').className = 'px-2.5 py-1 rounded text-xs font-medium bg-[#1e2330] text-white border border-[#2d3548]';
+      if (filter === 'DEPOSIT') document.getElementById('filter-dep').className = 'px-2.5 py-1 rounded text-xs font-medium bg-[#15271e] text-emerald-300 border border-[#224432]';
+      if (filter === 'WITHDRAWAL') document.getElementById('filter-wth').className = 'px-2.5 py-1 rounded text-xs font-medium bg-[#2b171a] text-rose-300 border border-[#482329]';
+      if (filter === 'WIRE_TRANSFER') document.getElementById('filter-wire').className = 'px-2.5 py-1 rounded text-xs font-medium bg-[#182337] text-blue-300 border border-[#293d61]';
+
+      renderTransactions();
+    }
+
+    function renderTransactions() {
+      const tbody = document.getElementById('transaction-rows');
+      const filtered = rawTransactions.filter(tx => {
+        if (currentFilter === 'ALL') return true;
+        return tx.action === currentFilter;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-neutral-500">No records found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(tx => {
+        let badgeColor = 'bg-[#151923] text-neutral-300 border-[#262c3d]';
+        let amountColor = 'text-neutral-200';
+        let sign = '';
+
+        if (tx.action === 'DEPOSIT') {
+          badgeColor = 'bg-[#0f1d16] text-emerald-400 border-[#1b4332]';
+          amountColor = 'text-emerald-400';
+          sign = '+';
+        } else if (tx.action === 'WITHDRAWAL') {
+          badgeColor = 'bg-[#211114] text-rose-400 border-[#5c1d24]';
+          amountColor = 'text-rose-400';
+          sign = '-';
+        } else if (tx.action === 'WIRE_TRANSFER') {
+          badgeColor = 'bg-[#121c2d] text-blue-300 border-[#233555]';
+          amountColor = 'text-neutral-200';
+          sign = '-';
+        }
+
+        const dateStr = tx.timestamp ? tx.timestamp.replace('T', ' ').slice(0, 19) : 'Just now';
+
+        return `
+          <tr class="table-row-hover transition-colors cursor-pointer" onclick='viewReceiptByIndex(${tx.index})'>
+            <td class="py-2.5 px-3 font-mono text-neutral-400">#${tx.index}</td>
+            <td class="py-2.5 px-3 text-neutral-400 font-mono text-[11px]">${dateStr}</td>
+            <td class="py-2.5 px-3">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono uppercase border ${badgeColor}">
+                ${tx.action}
+              </span>
+            </td>
+            <td class="py-2.5 px-3 font-medium text-neutral-300">
+              ${tx.recipient || tx.reference || 'N/A'}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono font-semibold ${amountColor}">
+              ${sign}${formatUSD(tx.amount)}
+            </td>
+            <td class="py-2.5 px-3 text-center">
+              <button onclick='event.stopPropagation(); viewReceiptByIndex(${tx.index})' class="px-2 py-0.5 rounded bg-[#161a24] hover:bg-[#202737] text-[11px] font-mono text-neutral-300 border border-[#242c3d]">
+                Inspect Proof
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function viewReceiptByIndex(idx) {
+      const match = rawTransactions.find(t => t.index === idx);
+      if (match) {
+        showReceiptModal({
+          entry_index: match.index,
+          chain_hash: match.hash,
+          mac: match.mac,
+          epoch: match.epoch,
+          display: formatUSD(match.amount),
+          recipient: match.recipient,
+          reference: match.reference,
+          timestamp: match.timestamp
+        });
+      }
+    }
+
+    async function handleDeposit(e) {
+      e.preventDefault();
+      const amountInput = document.getElementById('deposit-amount');
+      const amount = parseFloat(amountInput.value);
+      if (!amount || amount <= 0) {
+        showToast('Specify a valid deposit amount', 'warning');
+        return;
+      }
+
+      const source = document.getElementById('deposit-source').value;
+      const note = document.getElementById('deposit-note').value;
+      const btn = document.getElementById('btn-deposit-submit');
+      btn.disabled = true;
+      btn.textContent = 'Committing Record...';
+
+      try {
+        const res = await fetch('/api/user/deposit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount, source, note })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || 'Deposit failed');
+        }
+
+        const data = await res.json();
+        playSuccessChime();
+        showToast(`Committed deposit of ${formatUSD(amount)}`, 'success');
+        amountInput.value = '';
+        await refreshAccount();
+
+        if (data.receipt) {
+          showReceiptModal(data.receipt, "Deposit Receipt");
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Authorize Deposit';
+      }
+    }
+
+    async function handleWithdraw(e) {
+      e.preventDefault();
+      const amountInput = document.getElementById('withdraw-amount');
+      const amount = parseFloat(amountInput.value);
+      if (!amount || amount <= 0) {
+        showToast('Specify a valid withdrawal amount', 'warning');
+        return;
+      }
+
+      const method = document.getElementById('withdraw-method').value;
+      const note = document.getElementById('withdraw-note').value;
+      const btn = document.getElementById('btn-withdraw-submit');
+      btn.disabled = true;
+      btn.textContent = 'Processing Disbursal...';
+
+      try {
+        const res = await fetch('/api/user/withdraw', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount, method, note })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || 'Disbursal failed');
+        }
+
+        const data = await res.json();
+        playWithdrawSound();
+        showToast(`Disbursed ${formatUSD(amount)} cash out`, 'success');
+        amountInput.value = '';
+        await refreshAccount();
+
+        if (data.receipt) {
+          showReceiptModal(data.receipt, "Cash Disbursal Receipt");
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Authorize Disbursal';
+      }
+    }
+
+    async function handleTransfer(e) {
+      e.preventDefault();
+      const amount = parseFloat(document.getElementById('transfer-amount').value);
+      const recipient = document.getElementById('transfer-recipient').value;
+      const reference = document.getElementById('transfer-ref').value;
+
+      if (!amount || amount <= 0 || !recipient) {
+        showToast('Specify beneficiary and valid amount', 'warning');
+        return;
+      }
+
+      const btn = document.getElementById('btn-transfer-submit');
+      btn.disabled = true;
+      btn.textContent = 'Transmitting Wire...';
+
+      try {
+        const res = await fetch('/api/user/transfer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount, recipient, reference })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || 'Transfer failed');
+        }
+
+        const data = await res.json();
+        playWithdrawSound();
+        showToast(`Wire transfer of ${formatUSD(amount)} dispatched to ${recipient}`, 'success');
+        document.getElementById('transfer-amount').value = '';
+        await refreshAccount();
+
+        if (data.receipt) {
+          showReceiptModal(data.receipt, "Wire Transfer Receipt");
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Execute Wire';
+      }
+    }
+
+    document.getElementById('sound-btn').onclick = () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('sound-btn').textContent = soundEnabled ? '🔊' : '🔇';
+      showToast(soundEnabled ? 'Audio alerts enabled' : 'Audio muted', 'info');
+    };
+
+    connectWebSocket((event) => {
+      if (['transaction', 'tamper', 'reset', 'append'].includes(event.event)) {
+        refreshAccount();
+      }
+    }, (status) => {
+      const ind = document.getElementById('ws-indicator');
+      const txt = document.getElementById('ws-status-text');
+      if (status === 'connected') {
+        ind.className = 'status-dot-emerald';
+        txt.textContent = 'Connected';
+      } else {
+        ind.className = 'status-dot-amber';
+        txt.textContent = 'Reconnecting';
+      }
+    });
+
+    refreshAccount();
+  </script>
+</body>
+</html>

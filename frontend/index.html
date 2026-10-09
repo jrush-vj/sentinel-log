@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SentinelLog &bull; Cryptographic Banking &amp; Audit System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="bg-[#090a0f] text-neutral-100 min-h-screen flex flex-col justify-between antialiased">
+
+  <!-- Header -->
+  <header class="border-b border-[#1b1f2b] bg-[#0d0f15]/90 backdrop-blur-md">
+    <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded bg-[#18202f] border border-[#26344d] flex items-center justify-center font-bold text-xs text-neutral-200">
+          SL
+        </div>
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-neutral-200">SentinelLog Infrastructure</span>
+        </div>
+      </div>
+      <div>
+        <button onclick="openShareModal()" class="px-2.5 py-1 rounded bg-[#161922] hover:bg-[#1e2330] text-[11px] font-medium text-neutral-300 border border-[#242938] transition-colors">
+          Share Links
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero & Dual Portal Cards -->
+  <main class="max-w-4xl mx-auto px-4 py-12 flex-1 flex flex-col justify-center items-center text-center">
+    
+    <!-- Status Badge -->
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#11131a] border border-[#1e2330] text-xs text-neutral-400 mb-5">
+      <span class="status-dot-emerald"></span>
+      <span class="font-mono text-[11px]">Self-Hosted Node &bull; Schneier-Kelsey Forward-Secure Audit Chain</span>
+    </div>
+
+    <!-- Title -->
+    <h1 class="text-2xl sm:text-4xl font-bold text-white tracking-tight max-w-2xl leading-snug">
+      Tamper-Evident Commercial Banking &amp; Host Audit Verification
+    </h1>
+    <p class="text-xs sm:text-sm text-neutral-400 max-w-xl mt-3 leading-relaxed">
+      A self-hosted dual-portal simulation for security demonstrations. One participant executes financial operations, while another monitors cryptographic ledger integrity in real-time.
+    </p>
+
+    <!-- Two Portals -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl mt-10 text-left">
+      
+      <!-- Card 1: User Portal -->
+      <a href="/user" class="surface-panel hover:bg-[#151822] rounded-xl p-5 transition-colors border border-[#1e2330] hover:border-[#2f374a] flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-mono text-neutral-400 uppercase">PORTAL 01</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-[#0f1d16] text-emerald-400 border border-[#1b4332]">
+              For Friend 1
+            </span>
+          </div>
+          <h2 class="text-base font-semibold text-white">
+            Client Banking Portal
+          </h2>
+          <p class="text-xs text-neutral-400 mt-1.5 leading-relaxed">
+            Simulate retail and treasury operations. Deposit capital, withdraw funds, execute wire transfers, and inspect forward-secure HMAC receipts.
+          </p>
+        </div>
+
+        <div class="mt-6 pt-3 border-t border-[#1a1e29] flex items-center justify-between text-xs font-medium text-neutral-300">
+          <span class="font-mono text-neutral-400">/user</span>
+          <span>Open Portal &rarr;</span>
+        </div>
+      </a>
+
+      <!-- Card 2: Admin Dashboard -->
+      <a href="/admin" class="surface-panel hover:bg-[#151822] rounded-xl p-5 transition-colors border border-[#1e2330] hover:border-[#2f374a] flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-mono text-neutral-400 uppercase">PORTAL 02</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-[#141b27] text-blue-300 border border-[#212d42]">
+              For Friend 2
+            </span>
+          </div>
+          <h2 class="text-base font-semibold text-white">
+            Auditor &amp; SOC Console
+          </h2>
+          <p class="text-xs text-neutral-400 mt-1.5 leading-relaxed">
+            Monitor the live transaction stream, verify the on-disk hash chain, and observe real-time SEV-1 alerts triggered if an adversary alters log files via SSH.
+          </p>
+        </div>
+
+        <div class="mt-6 pt-3 border-t border-[#1a1e29] flex items-center justify-between text-xs font-medium text-neutral-300">
+          <span class="font-mono text-neutral-400">/admin</span>
+          <span>Open Console &rarr;</span>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- Quick Access URLs Box -->
+    <div class="w-full max-w-3xl mt-6 p-4 rounded-xl surface-panel border border-[#1e2330] text-left">
+      <div class="flex items-center justify-between mb-2.5">
+        <h3 class="text-xs font-semibold text-neutral-200 uppercase tracking-wide">Multi-Participant Links</h3>
+        <span id="tunnel-badge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#0b0c10] text-neutral-400 border border-[#1b1f2b]">
+          Checking tunnel...
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <div class="p-2.5 rounded-lg bg-[#0c0e14] border border-[#1a1e29] flex items-center justify-between">
+          <div class="truncate mr-2">
+            <span class="text-[10px] text-neutral-400 uppercase font-medium block">Friend 1 (Client):</span>
+            <span id="link-user" class="text-xs font-mono text-neutral-200">--</span>
+          </div>
+          <button onclick="copyUserLink()" class="px-2 py-1 bg-[#161a24] hover:bg-[#202737] text-neutral-200 rounded text-xs transition-colors border border-[#242c3d]">Copy</button>
+        </div>
+
+        <div class="p-2.5 rounded-lg bg-[#0c0e14] border border-[#1a1e29] flex items-center justify-between">
+          <div class="truncate mr-2">
+            <span class="text-[10px] text-neutral-400 uppercase font-medium block">Friend 2 (Auditor):</span>
+            <span id="link-admin" class="text-xs font-mono text-neutral-200">--</span>
+          </div>
+          <button onclick="copyAdminLink()" class="px-2 py-1 bg-[#161a24] hover:bg-[#202737] text-neutral-200 rounded text-xs transition-colors border border-[#242c3d]">Copy</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#1b1f2b] bg-[#090a0f] py-4 text-center text-[11px] text-neutral-500">
+    <p>&copy; 2026 SentinelLog &bull; Self-Hosted Linux Security Testing &amp; Verification</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/static/app.js"></script>
+  <script>
+    let uLink = '';
+    let aLink = '';
+
+    fetchTunnelLinks().then(data => {
+      const origin = window.location.origin;
+      uLink = data.user_url.startsWith('http') ? data.user_url : `${origin}${data.user_url}`;
+      aLink = data.admin_url.startsWith('http') ? data.admin_url : `${origin}${data.admin_url}`;
+
+      document.getElementById('link-user').textContent = truncateHash(uLink, 16, 8);
+      document.getElementById('link-admin').textContent = truncateHash(aLink, 16, 8);
+
+      const badge = document.getElementById('tunnel-badge');
+      if (data.ngrok_url) {
+        badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded bg-[#0f1d16] text-emerald-300 border border-[#1b4332]';
+        badge.textContent = `Ngrok: Online`;
+      } else {
+        badge.textContent = `Local Port 8000`;
+      }
+    });
+
+    function copyUserLink() {
+      copyToClipboard(uLink, 'User portal link copied');
+    }
+
+    function copyAdminLink() {
+      copyToClipboard(aLink, 'Admin console link copied');
+    }
+  </script>
+</body>
+</html>

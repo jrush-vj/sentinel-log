@@ -1,0 +1,15 @@
+[
+  {
+    "version": 1,
+    "created_at": "2026-10-09T10:23:34Z",
+    "next_index": 6,
+    "last_y": "a98651740b6ba630f973619ba111f2d2b1e641e888b91c9527928e611a98a9af",
+    "epoch": 1,
+    "epoch_entries": 6,
+    "epoch_size": 72,
+    "genesis_y": "bc66cbd8cebdd2867c3e296034e433d056c2959510fa3b3394fbe49c3fc782da",
+    "k0_commitment": "42066a6dadf565ae14a0c4f05aaa88f119023409f5105fb2aa371595bece74eb",
+    "updated_at": "2026-10-09T10:23:34Z",
+    "state_mac": "c0aa7bbe76ffc13d3d474dcae2e65ba38e8cfce097d998e6cb83006b61da772d"
+  }
+]

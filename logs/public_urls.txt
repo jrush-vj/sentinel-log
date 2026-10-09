@@ -1,0 +1,2 @@
+USER_PORTAL=https://e614-2409-40f2-1164-79ef-79dd-8511-e9a3-71a7.ngrok-free.app/user
+ADMIN_DASHBOARD=https://e614-2409-40f2-1164-79ef-79dd-8511-e9a3-71a7.ngrok-free.app/admin

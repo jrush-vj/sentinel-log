@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SentinelLog &bull; Auditor &amp; Security Operations Console</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            soc: {
+              50: '#f8fafc',
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#020617'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#090a0f] text-neutral-100 min-h-screen flex flex-col antialiased">
+
+  <!-- Executive SOC Navigation Bar -->
+  <header class="border-b border-[#1b1f2b] bg-[#0d0f15]/90 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      
+      <!-- Brand -->
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded bg-[#18202f] border border-[#26344d] flex items-center justify-center font-bold text-xs text-blue-300">
+          SOC
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xs font-semibold uppercase tracking-wider text-neutral-200">SentinelLog Auditor Console</h1>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#131b29] text-blue-300 border border-[#21304b]">
+              Forward-Secure Verifier
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="flex items-center gap-2.5">
+        <div class="flex items-center gap-2 px-2.5 py-1 rounded bg-[#11141c] border border-[#1e2330] text-[11px] text-neutral-400 font-mono">
+          <span id="ws-indicator" class="status-dot-emerald"></span>
+          <span id="ws-status-text">File Watcher: Active</span>
+        </div>
+
+        <button onclick="openShareModal()" class="px-2.5 py-1 rounded bg-[#161922] hover:bg-[#1e2330] text-[11px] font-medium text-neutral-300 border border-[#242938] transition-colors">
+          Share Links
+        </button>
+
+        <a href="/user" class="px-2.5 py-1 rounded bg-[#132219] hover:bg-[#192f23] text-emerald-300 border border-[#1f3c2a] text-[11px] font-medium transition-colors">
+          Client Bank &rarr;
+        </a>
+
+        <button id="sound-btn" class="p-1 rounded bg-[#161922] text-neutral-400 hover:text-white text-xs border border-[#242938]" title="Toggle audio alert">
+          🔊
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Console Layout -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 space-y-5">
+
+    <!-- INTEGRITY STATUS BANNER (Dynamic Enterprise Security State) -->
+    <div id="chain-status-banner" class="rounded-xl p-4 surface-panel transition-all">
+      <div class="flex items-center gap-3">
+        <span class="w-2 h-2 rounded-full bg-neutral-500"></span>
+        <span class="text-xs text-neutral-400 font-mono">Checking on-disk cryptographic chain integrity...</span>
+      </div>
+    </div>
+
+    <!-- Telemetry Metric Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+      
+      <!-- Card 1: Chain Integrity State -->
+      <div class="surface-panel rounded-xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Integrity State</span>
+          <span id="metric-icon" class="status-dot-emerald"></span>
+        </div>
+        <div class="my-1">
+          <span id="metric-status-badge" class="px-2 py-0.5 rounded text-xs font-mono font-semibold tracking-wider uppercase bg-[#0f1d16] text-emerald-400 border border-[#1b4332]">
+            VERIFIED VALID
+          </span>
+        </div>
+        <p id="metric-status-sub" class="text-[11px] text-neutral-400 mt-1 font-mono">
+          0 anomalies detected
+        </p>
+      </div>
+
+      <!-- Card 2: Committed Records -->
+      <div class="surface-panel rounded-xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Committed Records</span>
+          <span class="text-xs font-mono text-neutral-500">DISK</span>
+        </div>
+        <div class="my-1">
+          <span id="metric-entry-count" class="text-2xl font-bold text-white font-mono">--</span>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-1 font-mono truncate">
+          logs/app_audit.json
+        </p>
+      </div>
+
+      <!-- Card 3: Chain Head y_N -->
+      <div class="surface-panel rounded-xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Head Digest (y<sub>N</sub>)</span>
+          <button onclick="copyCurrentHead()" class="text-[11px] text-blue-400 hover:text-blue-300">Copy</button>
+        </div>
+        <div class="my-1">
+          <span id="metric-head-hash" class="text-xs font-mono font-medium text-neutral-200 break-all select-all">
+            Loading...
+          </span>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-1 font-mono">
+          y<sub>0</sub>: <span id="metric-genesis" class="text-neutral-300">bc66cb...</span>
+        </p>
+      </div>
+
+      <!-- Card 4: Forward-Secure Epoch -->
+      <div class="surface-panel rounded-xl p-4 flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[11px] font-medium text-neutral-400 uppercase tracking-wider">Key Epoch</span>
+          <span class="text-xs font-mono text-neutral-500">FS-MAC</span>
+        </div>
+        <div class="my-1">
+          <span id="metric-epoch" class="text-2xl font-bold text-neutral-100 font-mono">Epoch 1</span>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-1 font-mono">
+          K<sub>j+1</sub> derived via SHA-256
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Two-Column Operational Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      
+      <!-- Left Column: Live Ledger Table (Col 8) -->
+      <div class="lg:col-span-8 surface-panel rounded-xl p-5 space-y-3">
+        
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-[#1e2330]">
+          <div>
+            <h3 class="text-sm font-semibold text-white">Cryptographic Audit Ledger</h3>
+            <p class="text-xs text-neutral-400">Disk records streamed live. Tampered rows flag instantly with cryptographic diagnostics.</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="verifyChainNow()" id="btn-verify-now" class="px-2.5 py-1 rounded bg-[#1e2330] hover:bg-[#272d3e] text-neutral-200 text-xs font-medium border border-[#2d3548] transition-colors">
+              Verify Integrity
+            </button>
+            <a href="/api/log/raw" target="_blank" class="px-2.5 py-1 rounded bg-[#161922] hover:bg-[#1e2330] text-neutral-400 hover:text-neutral-200 text-xs font-medium border border-[#242938]">
+              Raw JSON &rarr;
+            </a>
+          </div>
+        </div>
+
+        <!-- Ledger Table Container -->
+        <div class="overflow-x-auto max-h-[560px] overflow-y-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="sticky top-0 bg-[#11131a] z-10">
+              <tr class="border-b border-[#1e2330] text-neutral-400 font-mono text-[11px]">
+                <th class="py-2.5 px-3">Idx</th>
+                <th class="py-2.5 px-3">Time</th>
+                <th class="py-2.5 px-3">Action</th>
+                <th class="py-2.5 px-3">Counterparty</th>
+                <th class="py-2.5 px-3 text-right">Amount</th>
+                <th class="py-2.5 px-3">Digest (y)</th>
+                <th class="py-2.5 px-3 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="audit-table-body" class="divide-y divide-[#171b25] font-sans">
+              <tr>
+                <td colspan="7" class="py-8 text-center text-neutral-500">Loading audit records...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Adversary Simulator & SSH Guide (Col 4) -->
+      <div class="lg:col-span-4 space-y-4">
+        
+        <!-- Adversary Attack Simulator -->
+        <div class="surface-panel rounded-xl p-4 space-y-3">
+          <div class="pb-2 border-b border-[#1e2330]">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-neutral-200">Attack Vectors Simulation</h4>
+            <p class="text-[11px] text-neutral-400">Trigger on-disk file alterations to verify detection.</p>
+          </div>
+
+          <div class="space-y-1.5">
+            <button onclick="triggerAttack('payload')" class="w-full text-left px-3 py-2 rounded-lg bg-[#0c0e14] hover:bg-[#161922] border border-[#1e2330] hover:border-[#2d3448] text-xs transition-colors flex items-center justify-between">
+              <div>
+                <span class="font-medium text-neutral-200 block">Payload Modification</span>
+                <span class="text-[10px] text-neutral-400">Rewrites $50,000 to $50 in logs/app_audit.json</span>
+              </div>
+              <span class="text-neutral-500 text-xs">&rarr;</span>
+            </button>
+
+            <button onclick="triggerAttack('delete')" class="w-full text-left px-3 py-2 rounded-lg bg-[#0c0e14] hover:bg-[#161922] border border-[#1e2330] hover:border-[#2d3448] text-xs transition-colors flex items-center justify-between">
+              <div>
+                <span class="font-medium text-neutral-200 block">Record Deletion</span>
+                <span class="text-[10px] text-neutral-400">Erases a committed transaction entry</span>
+              </div>
+              <span class="text-neutral-500 text-xs">&rarr;</span>
+            </button>
+
+            <button onclick="triggerAttack('tail_truncate')" class="w-full text-left px-3 py-2 rounded-lg bg-[#0c0e14] hover:bg-[#161922] border border-[#1e2330] hover:border-[#2d3448] text-xs transition-colors flex items-center justify-between">
+              <div>
+                <span class="font-medium text-neutral-200 block">Tail Truncation</span>
+                <span class="text-[10px] text-neutral-400">Drops newest 2 entries to simulate rewind</span>
+              </div>
+              <span class="text-neutral-500 text-xs">&rarr;</span>
+            </button>
+
+            <button onclick="triggerAttack('wipe')" class="w-full text-left px-3 py-2 rounded-lg bg-[#0c0e14] hover:bg-[#161922] border border-[#1e2330] hover:border-[#2d3448] text-xs transition-colors flex items-center justify-between">
+              <div>
+                <span class="font-medium text-neutral-200 block">File Zeroing</span>
+                <span class="text-[10px] text-neutral-400">Truncates audit log to 0 bytes</span>
+              </div>
+              <span class="text-neutral-500 text-xs">&rarr;</span>
+            </button>
+          </div>
+
+          <div class="pt-2 border-t border-[#1e2330]">
+            <button onclick="resetChainBaseline()" id="btn-reset-chain" class="w-full py-2 rounded-lg bg-[#142019] hover:bg-[#1b2b22] border border-[#213d2f] text-emerald-300 text-xs font-medium transition-colors">
+              Restore Valid Baseline Chain
+            </button>
+          </div>
+        </div>
+
+        <!-- SSH Adversary Instructions Card -->
+        <div class="surface-panel rounded-xl p-4 space-y-2.5">
+          <div class="pb-1.5 border-b border-[#1e2330]">
+            <h4 class="text-xs font-semibold uppercase tracking-wider text-neutral-200">Adversary SSH Instructions</h4>
+            <p class="text-[11px] text-neutral-400">Test direct host tampering from Linux terminal.</p>
+          </div>
+
+          <div class="space-y-2 text-[11px] text-neutral-300">
+            <div>
+              <span class="text-neutral-400 block mb-0.5">1. SSH into the container:</span>
+              <div class="font-mono text-neutral-200 bg-[#0c0e14] p-1.5 rounded border border-[#1b1f2b] select-all">
+                ssh root@&lt;container-ip&gt;
+              </div>
+            </div>
+
+            <div>
+              <span class="text-neutral-400 block mb-0.5">2. Tamper with log via sed or nano:</span>
+              <div class="font-mono text-neutral-200 bg-[#0c0e14] p-1.5 rounded border border-[#1b1f2b] select-all">
+                nano logs/app_audit.json
+              </div>
+            </div>
+
+            <div>
+              <span class="text-neutral-400 block mb-0.5">Or execute hacker CLI:</span>
+              <div class="font-mono text-neutral-200 bg-[#0c0e14] p-1.5 rounded border border-[#1b1f2b] select-all">
+                python cli_hacker/attack_sim.py payload
+              </div>
+            </div>
+
+            <p class="text-neutral-400 text-[10px] pt-1">
+              The file watcher triggers <span class="font-mono text-neutral-300">verify_chain()</span> within 1 second and broadcasts a SEV-1 alert.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Forensic Record Detail Modal -->
+  <div id="inspector-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="surface-panel-elevated w-full max-w-xl rounded-xl p-6 relative max-h-[85vh] overflow-y-auto">
+      <button onclick="closeInspectorModal()" class="absolute top-4 right-4 text-neutral-400 hover:text-white text-xl">&times;</button>
+      <div id="inspector-modal-content"></div>
+    </div>
+  </div>
+
+  <!-- Executive Footer -->
+  <footer class="border-t border-[#1b1f2b] bg-[#090a0f] py-4 text-center text-[11px] text-neutral-500">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>&copy; 2026 SentinelLog Security Operations Center &bull; Forward-Secure Audit Verification</p>
+      <div class="flex items-center gap-4">
+        <a href="/user" class="hover:text-neutral-300 transition-colors">Client Banking Portal</a>
+        <a href="/" class="hover:text-neutral-300 transition-colors">Gateway</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/static/app.js"></script>
+  <script>
+    let logEntries = [];
+    let currentVerification = null;
+    let latestHeadHash = '';
+
+    function copyCurrentHead() {
+      if (latestHeadHash) {
+        copyToClipboard(latestHeadHash, 'Head hash copied');
+      }
+    }
+
+    async function loadLogData() {
+      try {
+        const [logRes, verRes] = await Promise.all([
+          fetch('/api/log'),
+          fetch('/api/verify')
+        ]);
+
+        if (logRes.ok) {
+          const logData = await logRes.json();
+          logEntries = logData.entries || [];
+          document.getElementById('metric-entry-count').textContent = logData.count !== undefined ? logData.count : logEntries.length;
+          
+          if (logData.log) {
+            document.getElementById('metric-epoch').textContent = `Epoch ${logData.log.epoch || 1}`;
+            latestHeadHash = logData.log.head_hash || '';
+            document.getElementById('metric-head-hash').textContent = truncateHash(latestHeadHash, 8, 6);
+            document.getElementById('metric-genesis').textContent = truncateHash(logData.log.genesis_hash, 6, 4);
+          }
+        }
+
+        if (verRes.ok) {
+          currentVerification = await verRes.json();
+          renderVerificationStatus(currentVerification);
+        }
+
+        renderAuditLedger();
+      } catch (e) {
+        console.error('Failed to fetch audit data:', e);
+      }
+    }
+
+    function renderVerificationStatus(report) {
+      const banner = document.getElementById('chain-status-banner');
+      const badge = document.getElementById('metric-status-badge');
+      const sub = document.getElementById('metric-status-sub');
+      const icon = document.getElementById('metric-icon');
+
+      const isValid = report.status === 'VALID';
+
+      if (isValid) {
+        banner.className = 'rounded-xl p-4 incident-banner-success transition-all';
+        banner.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="text-xs font-semibold uppercase tracking-wider text-emerald-200">Audit Chain Verified Valid</h2>
+                  <span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#0f2419] text-emerald-300 border border-[#1e4c34]">
+                    Integrity 100%
+                  </span>
+                </div>
+                <p class="text-xs text-neutral-300 mt-0.5">
+                  All ${report.entries_verified || logEntries.length} entries mathematically verified against genesis seed y<sub>0</sub> and HMAC signatures.
+                </p>
+              </div>
+            </div>
+            <div class="self-end sm:self-center font-mono text-[11px] text-emerald-300/80">
+              Latency: ${report.duration_ms ? report.duration_ms.toFixed(2) : '3.8'}ms
+            </div>
+          </div>
+        `;
+
+        badge.className = 'px-2 py-0.5 rounded text-xs font-mono font-semibold tracking-wider uppercase bg-[#0f1d16] text-emerald-400 border border-[#1b4332]';
+        badge.textContent = 'VERIFIED VALID';
+        sub.textContent = '0 corrupted entries detected';
+        sub.className = 'text-[11px] text-neutral-400 mt-1 font-mono';
+        icon.className = 'status-dot-emerald';
+
+      } else {
+        // Tampered - Executive SEV-1 Incident
+        playTamperAlert();
+
+        const diag = report.diagnostics && report.diagnostics[0] ? report.diagnostics[0] : {};
+        const headline = report.headline || 'INTEGRITY VIOLATION DETECTED';
+        const reason = report.reason || diag.title || report.category || 'Integrity Violation';
+        const corruptedIdx = report.corrupted_index !== undefined ? report.corrupted_index : (diag.index !== undefined ? diag.index : 'Unknown');
+
+        banner.className = 'rounded-xl p-4 incident-banner-danger transition-all';
+        banner.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+            <div class="flex items-start gap-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500 mt-1 flex-shrink-0"></span>
+              <div class="space-y-0.5">
+                <div class="flex items-center gap-2">
+                  <h2 class="text-xs font-bold uppercase tracking-wider text-rose-300">${headline}</h2>
+                  <span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-[#3b1216] text-rose-200 border border-[#6b2229]">
+                    SEV-1 ALERT
+                  </span>
+                </div>
+                <p class="text-xs font-semibold text-rose-100">
+                  Violation: ${reason} (Record #${corruptedIdx})
+                </p>
+                <p class="text-[11px] text-rose-300/90">
+                  ${diag.detail || report.detail || 'Recomputed chain hash does not match on-disk bytes or forward-secure HMAC signature.'}
+                </p>
+              </div>
+            </div>
+            <div class="self-end sm:self-start">
+              <button onclick="resetChainBaseline()" class="px-3 py-1 bg-[#2d1215] hover:bg-[#3d181c] text-rose-200 text-xs font-medium rounded border border-[#582128] transition-colors">
+                Restore Baseline
+              </button>
+            </div>
+          </div>
+        `;
+
+        badge.className = 'px-2 py-0.5 rounded text-xs font-mono font-semibold tracking-wider uppercase bg-[#281115] text-rose-400 border border-[#5e2129]';
+        badge.textContent = 'COMPROMISED';
+        sub.textContent = `Entry #${corruptedIdx} failed verification!`;
+        sub.className = 'text-[11px] text-rose-400 mt-1 font-mono font-medium';
+        icon.className = 'status-dot-rose';
+      }
+    }
+
+    function renderAuditLedger() {
+      const tbody = document.getElementById('audit-table-body');
+      if (logEntries.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-neutral-500">No entries in logs/app_audit.json</td></tr>`;
+        return;
+      }
+
+      const flaggedIndices = new Set(currentVerification ? (currentVerification.flagged_indices || (currentVerification.corrupted_index !== undefined ? [currentVerification.corrupted_index] : [])) : []);
+
+      tbody.innerHTML = logEntries.map(entry => {
+        const isCorrupt = flaggedIndices.has(entry.index);
+        const payload = entry.payload || {};
+        const action = payload.action || 'TRANSACTION';
+        const actor = payload.actor || 'N/A';
+        const target = payload.recipient || payload.reference || 'N/A';
+        const amountDisplay = payload.amount_display || (payload.amount !== undefined ? formatUSD(payload.amount) : '--');
+        const hashDisplay = truncateHash(entry.y, 8, 6);
+
+        let rowClass = isCorrupt ? 'table-row-tampered' : 'table-row-hover';
+        let statusBadge = isCorrupt 
+          ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-[#2d1215] text-rose-400 border border-[#5c2027]">FAILED</span>`
+          : `<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-[#0f1d16] text-emerald-400 border border-[#1b4332]">VALID</span>`;
+
+        return `
+          <tr class="${rowClass} transition-colors cursor-pointer" onclick='openInspector(${entry.index})'>
+            <td class="py-2.5 px-3 font-mono ${isCorrupt ? 'text-rose-400 font-bold' : 'text-neutral-400'}">
+              #${entry.index}
+            </td>
+            <td class="py-2.5 px-3 text-[11px] font-mono text-neutral-400">
+              ${(entry.timestamp || '').slice(11, 19) || '00:00:00'}
+            </td>
+            <td class="py-2.5 px-3">
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-mono uppercase bg-[#141720] text-neutral-300 border border-[#212635]">
+                ${action}
+              </span>
+            </td>
+            <td class="py-2.5 px-3 text-neutral-300 font-medium truncate max-w-[140px]" title="${actor} &rarr; ${target}">
+              ${target}
+            </td>
+            <td class="py-2.5 px-3 text-right font-mono font-semibold ${isCorrupt ? 'text-rose-400' : 'text-neutral-200'}">
+              ${amountDisplay}
+            </td>
+            <td class="py-2.5 px-3 font-mono text-[11px] text-neutral-400">
+              ${hashDisplay}
+            </td>
+            <td class="py-2.5 px-3 text-center">
+              ${statusBadge}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openInspector(idx) {
+      const entry = logEntries.find(e => e.index === idx);
+      if (!entry) return;
+
+      const flaggedIndices = new Set(currentVerification ? (currentVerification.flagged_indices || []) : []);
+      const isCorrupt = flaggedIndices.has(entry.index);
+
+      const content = document.getElementById('inspector-modal-content');
+      content.innerHTML = `
+        <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#232838]">
+          <div>
+            <span class="text-[10px] font-semibold tracking-wider uppercase ${isCorrupt ? 'text-rose-400' : 'text-neutral-400'}">
+              ${isCorrupt ? 'RECORD VERIFICATION FAILURE' : 'CRYPTOGRAPHIC RECORD PROOF'}
+            </span>
+            <h3 class="text-sm font-semibold text-white mt-0.5">Block Inspector &bull; Entry #${entry.index}</h3>
+          </div>
+          <span class="text-xs font-mono px-2 py-0.5 rounded ${isCorrupt ? 'bg-[#2d1215] text-rose-400 border border-[#5c2027]' : 'bg-[#141720] text-neutral-300 border border-[#212635]'}">
+            ${isCorrupt ? 'ANOMALOUS' : 'VALID'}
+          </span>
+        </div>
+
+        <div class="space-y-3 text-xs">
+          <div>
+            <label class="block text-neutral-400 font-medium mb-1">Payload JSON (D<sub>${entry.index}</sub>)</label>
+            <pre class="bg-[#0b0c10] p-3 rounded-lg border border-[#1b1f2b] font-mono text-neutral-300 overflow-x-auto text-[11px]">${JSON.stringify(entry.payload, null, 2)}</pre>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-neutral-400 font-medium mb-1">Chain Digest y<sub>${entry.index}</sub> = SHA256(y<sub>${entry.index-1}</sub> || D<sub>${entry.index}</sub>)</label>
+              <div class="bg-[#0b0c10] p-2.5 rounded-lg border border-[#1b1f2b] font-mono text-neutral-300 break-all text-[11px] select-all">
+                ${entry.y}
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-neutral-400 font-medium mb-1">Forward-Secure MAC W<sub>${entry.index}</sub> = HMAC<sub>K</sub>(y<sub>${entry.index}</sub>)</label>
+              <div class="bg-[#0b0c10] p-2.5 rounded-lg border border-[#1b1f2b] font-mono ${isCorrupt ? 'text-rose-400' : 'text-emerald-400'} break-all text-[11px] select-all">
+                ${entry.W}
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 pt-1">
+            <div class="p-2.5 bg-[#0b0c10] rounded-lg border border-[#1b1f2b]">
+              <span class="text-neutral-400 block text-[10px] uppercase font-medium">Epoch</span>
+              <span class="text-white font-mono font-semibold">Epoch ${entry.epoch || 1}</span>
+            </div>
+            <div class="p-2.5 bg-[#0b0c10] rounded-lg border border-[#1b1f2b]">
+              <span class="text-neutral-400 block text-[10px] uppercase font-medium">Verification Result</span>
+              <span class="${isCorrupt ? 'text-rose-400 font-semibold' : 'text-emerald-400 font-semibold'}">
+                ${isCorrupt ? 'TAMPERED / MISMATCH' : 'INTACT'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 flex justify-end">
+          <button onclick="closeInspectorModal()" class="px-4 py-1.5 bg-[#1e2230] hover:bg-[#272c3d] text-neutral-200 text-xs font-medium rounded border border-[#2f354a]">
+            Close
+          </button>
+        </div>
+      `;
+
+      document.getElementById('inspector-modal').classList.remove('hidden');
+    }
+
+    function closeInspectorModal() {
+      document.getElementById('inspector-modal').classList.add('hidden');
+    }
+
+    async function verifyChainNow() {
+      const btn = document.getElementById('btn-verify-now');
+      btn.disabled = true;
+      btn.textContent = 'Verifying...';
+      try {
+        await loadLogData();
+        showToast('Chain integrity verified', 'info');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Verify Integrity';
+      }
+    }
+
+    async function triggerAttack(kind) {
+      try {
+        showToast(`Applying vector: ${kind}`, 'warning');
+        const res = await fetch(`/api/demo/attack?kind=${encodeURIComponent(kind)}`, {
+          method: 'POST'
+        });
+        if (!res.ok) throw new Error('Attack execution failed');
+        showToast(`Attack executed: ${kind}`, 'tamper');
+        await loadLogData();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function resetChainBaseline() {
+      const btn = document.getElementById('btn-reset-chain');
+      btn.disabled = true;
+      btn.textContent = 'Restoring...';
+      try {
+        const res = await fetch('/api/demo/reset?seed=true', { method: 'POST' });
+        if (!res.ok) throw new Error('Reset failed');
+        playSuccessChime();
+        showToast('Chain baseline restored', 'success');
+        await loadLogData();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Restore Valid Baseline Chain';
+      }
+    }
+
+    document.getElementById('sound-btn').onclick = () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('sound-btn').textContent = soundEnabled ? '🔊' : '🔇';
+      showToast(soundEnabled ? 'Audio alerts enabled' : 'Audio muted', 'info');
+    };
+
+    connectWebSocket((event) => {
+      if (['transaction', 'tamper', 'log_changed', 'reset', 'append'].includes(event.event)) {
+        loadLogData();
+        if (event.event === 'tamper') {
+          playTamperAlert();
+        }
+      }
+    }, (status) => {
+      const ind = document.getElementById('ws-indicator');
+      const txt = document.getElementById('ws-status-text');
+      if (status === 'connected') {
+        ind.className = 'status-dot-emerald';
+        txt.textContent = 'File Watcher: Active';
+      } else {
+        ind.className = 'status-dot-amber';
+        txt.textContent = 'Reconnecting...';
+      }
+    });
+
+    loadLogData();
+  </script>
+</body>
+</html>

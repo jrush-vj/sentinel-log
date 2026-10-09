@@ -1,0 +1,118 @@
+[
+  {
+    "index": 0,
+    "timestamp": "2026-10-09T10:23:34Z",
+    "payload": {
+      "action": "DEPOSIT",
+      "amount": 250000.0,
+      "amount_display": "+$250,000.00",
+      "currency": "USD",
+      "recipient": "Alex Vance (Account #8842)",
+      "reference": "INIT-CAPITAL-01",
+      "actor": "central.reserve@sentinelbank.com",
+      "approval": "CONFIRMED",
+      "note": "Initial Capital Reserve Allocation",
+      "source": "Treasury Allocation"
+    },
+    "y": "8bb92568ca0348412ae82d206b3586efa734c03ec90b68a126efa409951d75aa",
+    "W": "4d396be8ff876b42a76839f78429b91dda1563a037487286d6a9b1cedfe05b3a",
+    "epoch": 1,
+    "key_seed_commitment": "1d43fd5422a90e89f7d7b5c86b03891292aaca8c7970ab9b6819223fd0d0a3b6",
+    "meta_digest": "fae55d6a6ad47bae653c215b98fe29e25c794bbda87145e6d8d554e0dcf6b896"
+  },
+  {
+    "index": 1,
+    "timestamp": "2026-10-09T10:23:34Z",
+    "payload": {
+      "action": "WIRE_TRANSFER",
+      "amount": 50,
+      "amount_display": "$50.00",
+      "currency": "USD",
+      "recipient": "Supplier B",
+      "reference": "PO-2026-0042",
+      "actor": "treasury.operator@enterprise.example",
+      "approval": "APPROVED"
+    },
+    "y": "f3b5bdd7d7d3d9cede83b6f5e06efc979f9c6d07d74ad3edb8b08e245833b3ce",
+    "W": "3f6b8d3aad6072edcbba4655e99379e7e676184cffeaffeb7feb72f203a678bc",
+    "epoch": 1,
+    "key_seed_commitment": "1d43fd5422a90e89f7d7b5c86b03891292aaca8c7970ab9b6819223fd0d0a3b6",
+    "meta_digest": "c1dffacbf9d9435c38fe6dc5915da5a1b2c853378a7e0e144086c0d292cbab41"
+  },
+  {
+    "index": 2,
+    "timestamp": "2026-10-09T10:23:34Z",
+    "payload": {
+      "action": "VENDOR_ONBOARD",
+      "amount": 0.0,
+      "amount_display": "$0.00",
+      "currency": "USD",
+      "recipient": "Supplier B",
+      "reference": "KYC-77120",
+      "actor": "procurement.lead@enterprise.example",
+      "approval": "APPROVED"
+    },
+    "y": "84880c2668c406453dda9994fcbbf51da09acdaf3f815e230c8811d0bde798fb",
+    "W": "4f12514a92574324fcb251229cf05d2869c3535813409095469ad35a65c3375c",
+    "epoch": 1,
+    "key_seed_commitment": "1d43fd5422a90e89f7d7b5c86b03891292aaca8c7970ab9b6819223fd0d0a3b6",
+    "meta_digest": "65838a80f4ac9defa110287bb3343632991f0e4181ca07f8328c1b5fa8a52dfd"
+  },
+  {
+    "index": 3,
+    "timestamp": "2026-10-09T10:23:34Z",
+    "payload": {
+      "action": "INVOICE_PAYMENT",
+      "amount": 12450.75,
+      "amount_display": "$12,450.75",
+      "currency": "USD",
+      "recipient": "Logistics Co",
+      "reference": "INV-8891",
+      "actor": "ap.automation@enterprise.example",
+      "approval": "APPROVED"
+    },
+    "y": "7d84452cbca76f449022cbf8b637077475b3260344624ebd2eb01fa8a2996e54",
+    "W": "4b7c6639b79d81090e98de86c3e9cc2906dbdc342934596560a19cb66d83dea3",
+    "epoch": 1,
+    "key_seed_commitment": "1d43fd5422a90e89f7d7b5c86b03891292aaca8c7970ab9b6819223fd0d0a3b6",
+    "meta_digest": "748d370d3119d445bb28ed07a5a5ca6208b024975c3e143c21ef9745a4eab3df"
+  },
+  {
+    "index": 4,
+    "timestamp": "2026-10-09T10:23:34Z",
+    "payload": {
+      "action": "PAYROLL_DISBURSEMENT",
+      "amount": 218400.0,
+      "amount_display": "$218,400.00",
+      "currency": "USD",
+      "recipient": "Payroll Clearing",
+      "reference": "PAY-2026-10",
+      "actor": "hr.ops@enterprise.example",
+      "approval": "APPROVED"
+    },
+    "y": "d4a33b6ea528ab65f88df3bec6f3e3a98cfed7e1fff951ea321b9944adf8bb6d",
+    "W": "1242e7076aaef573cee53e89eaf340e3ea65adedb8289f918c6fea7f0d3fd79f",
+    "epoch": 1,
+    "key_seed_commitment": "1d43fd5422a90e89f7d7b5c86b03891292aaca8c7970ab9b6819223fd0d0a3b6",
+    "meta_digest": "ff0dd35eb062434fb77cce977979131f1f5e44566c137f38f1c9b44d67f5c70d"
+  },
+  {
+    "index": 5,
+    "timestamp": "2026-10-09T10:23:34Z",
+    "payload": {
+      "action": "ACCESS_GRANT",
+      "amount": 0.0,
+      "amount_display": "$0.00",
+      "currency": "USD",
+      "recipient": "vault.operator@enterprise.example",
+      "reference": "RMS-4410",
+      "actor": "security.admin@enterprise.example",
+      "approval": "APPROVED"
+    },
+    "y": "a98651740b6ba630f973619ba111f2d2b1e641e888b91c9527928e611a98a9af",
+    "W": "fe89b7e3c7a7f26d09362b2a6a4f1b8dc7d6e3b77a0b665f391a75c6576ba392",
+    "epoch": 1,
+    "key_seed_commitment": "1d43fd5422a90e89f7d7b5c86b03891292aaca8c7970ab9b6819223fd0d0a3b6",
+    "meta_digest": "9014172516b8f8615a3572b0c3670f78ab2e3089110228c9349b084ddb883f95"
+  }
+]
